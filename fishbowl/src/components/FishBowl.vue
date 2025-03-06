@@ -9,6 +9,7 @@
       <div v-if="image" class="mt-6 relative flex justify-center">
         <div class="relative w-72 h-72 flex items-center justify-center bg-gray-200 rounded-full shadow-inner overflow-hidden">
           <img :src="image" alt="Uploaded Preview" class="absolute w-64 h-64 object-cover rounded-full opacity-50" />
+          <!---
           <motion-img
             :src="goldfish"
             alt="Goldfish"
@@ -16,6 +17,7 @@
             :animate="getFishAnimation()"
             transition="{ repeat: Infinity, duration: 2 }"
           />
+          -->
         </div>
       </div>
       <p v-if="waterLevel !== null" class="mt-4 text-black font-medium">Water Level: {{ waterLevel }}%</p>
@@ -29,6 +31,7 @@
 import { ref } from "vue";
 import goldfish from "@/assets/goldfish.png";
 import UploadIcon from "@/components/UploadIcon.vue";
+import { motion } from "framer-motion";
 
 export default {
   setup() {
@@ -49,6 +52,7 @@ export default {
       formData.append("file", file);
 
       try {
+          /*
         const response = await fetch("http://localhost:5000/predict", {
           method: "POST",
           body: formData,
@@ -62,8 +66,9 @@ export default {
         if (!data || typeof data.water_level === "undefined") {
           throw new Error("Invalid response from server");
         }
-
         waterLevel.value = data.water_level;
+        */
+        waterLevel.tvalue = Math.floor(Math.random() * 100);
         error.value = null;
       } catch (err) {
         console.error("Error processing image", err);
@@ -88,6 +93,7 @@ export default {
 
     return {
       image,
+      motion,
       waterLevel,
       error,
       handleImageUpload,
