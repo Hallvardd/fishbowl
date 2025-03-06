@@ -68,7 +68,7 @@ export default {
         }
         waterLevel.value = data.water_level;
         */
-        waterLevel.tvalue = Math.floor(Math.random() * 100);
+        waterLevel.value = Math.floor(Math.random() * 100);
         error.value = null;
       } catch (err) {
         console.error("Error processing image", err);
