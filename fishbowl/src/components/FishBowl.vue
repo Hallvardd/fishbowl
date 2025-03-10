@@ -52,9 +52,7 @@ export default {
     const processImage = async (file) => {
       const formData = new FormData();
       formData.append("file", file);
-
       try {
-        /*
         const response = await fetch("http://localhost:5000/predict", {
           method: "POST",
           body: formData,
@@ -65,12 +63,16 @@ export default {
         }
 
         const data = await response.json();
-        if (!data || typeof data.water_level === "undefined") {
+        if (!data || typeof data.water_level === "undefined" || typeof data.image === "undefined") {
           throw new Error("Invalid response from server");
         }
-        waterLevel.value = data.water_level;
-        */
-        waterLevel.value = Math.floor(Math.random() * 100);
+
+        const byteArray = new Uint8Array(data.image.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+        const blob = new Blob([byteArray], { type: "image/jpeg" });
+        const imageUrl = URL.createObjectURL(blob);
+
+        image.value = imageUrl;
+        waterLevel.value = Math.floor(data.water_level * 100);
         error.value = null;
       } catch (err) {
         console.error("Error processing image", err);
@@ -80,10 +82,11 @@ export default {
 
     const getFeedbackMessage = () => {
       if (waterLevel.value === null) return "";
-      if (waterLevel.value < 20) return "Goldie died";
-      if (waterLevel.value < 50) return "Goldie is very thirsty";
-      if (waterLevel.value < 70) return "Goldie needs more water";
-      return "Goldie is happy!";
+      if (waterLevel.value < 20) return "Your goldfish died";
+      if (waterLevel.value < 50) return "Your goldfish very thirsty";
+      if (waterLevel.value < 70) return "Your goldfish needs more water";
+      if (waterLevel.value < 90) return "Your goldfish is happy!";
+      return "Your goldfish can escape!";
     };
 
     const getFishAnimation = () => {
