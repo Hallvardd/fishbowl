@@ -1,5 +1,6 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from io import BytesIO
 import numpy as np
 import onnxruntime as ort
@@ -8,6 +9,14 @@ import cv2
 import uvicorn
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # Load ONNX model
 session = ort.InferenceSession("../model/model.onnx")
@@ -54,8 +63,8 @@ def center_pad_square(image: np.ndarray):
 
 def image_to_numpy(image: Image.Image) -> np.ndarray:
     np_image = np.array(image)
-    np_image = center_pad_square(np_image)
-    np_image = cv2.resize(np_image, (512, 512))
+    #np_image = center_pad_square(np_image)
+    #np_image = cv2.resize(np_image, (512, 512))
     return np_image
 
 def np_image_to_tensor(np_image: np.ndarray) -> np.ndarray:
@@ -187,20 +196,23 @@ def calculate_volume(obj: object, step=1) -> float:
 
 
 @app.post("/predict")
-async def predict(file: UploadFile = File(...)):
-    """Receives image, runs ONNX model, and returns processed image + metadata"""
+async def predict(file: UploadFile = File(...)) -> JSONResponse:
+    """Receives image, runs ONNX model, and returns processed image + water_level"""
     image = Image.open(BytesIO(await file.read())).convert("RGB")
     image = image_to_numpy(image)
-    input_tensor = numpy_to_tensor(image)
+    input_tensor = np_image_to_tensor(image)
     outputs = session.run(None, {"input": input_tensor})
     processed_data = postprocess_results(image, outputs)
 
     # Unpack the dictionary
     processed_image = processed_data["image"]
-    metadata = [fb.water_level for fb in processed_data["fishbowls"]]
+    if len(processed_data["fishbowls"]) > 0:
+        fb = processed_data["fishbowls"][0]
+        water_level = fb.water_level if fb.water_level else None
+    else:
+        water_level = None
 
     # convert to PIL image
-    processed_image = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)
     processed_image = Image.fromarray(processed_image)
 
     # Convert image to bytes
@@ -210,10 +222,11 @@ async def predict(file: UploadFile = File(...)):
 
     return JSONResponse(content={
         "image": img_byte_arr.hex(),
-        "metadata": metadata
+        "water_level": water_level
     })
 
-def dummy_run():
+
+def dummy_run() -> None:
     image = Image.open("../test.jpg")
     image = image_to_numpy(image)
     input_tensor = np_image_to_tensor(image)
@@ -231,6 +244,7 @@ def dummy_run():
     print(f"Processed image shape: {processed_image.shape}")
     cv2.imshow("image", cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB))
     cv2.waitKey(0)
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=5000)
