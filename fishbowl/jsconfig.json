@@ -9,6 +9,9 @@
         "src/*"
       ]
     },
+    "vueCompilerOptions": {
+      "isCustomElement": ["upload-icon"]
+    },
     "lib": [
       "esnext",
       "dom",

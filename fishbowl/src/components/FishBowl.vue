@@ -3,7 +3,9 @@
     <div class="max-w-md w-full bg-gray-100 shadow-lg rounded-3xl p-6 text-center border border-gray-300">
       <h1 class="text-2xl font-semibold text-black mb-4">Water Level Detector</h1>
       <label class="cursor-pointer bg-gray-300 text-black py-3 px-6 rounded-xl flex items-center justify-center gap-2 shadow-md hover:bg-gray-400 transition">
-        <UploadIcon /> {{ image ? "Upload New Image" : "Upload Image" }}
+        <div class="w-6 h-6">
+          {{ image ? "Upload New Image" : "Upload Image" }}
+        </div>
         <input type="file" accept="image/*" class="hidden" @change="handleImageUpload" />
       </label>
       <div v-if="image" class="mt-6 relative flex justify-center">
@@ -52,7 +54,7 @@ export default {
       formData.append("file", file);
 
       try {
-          /*
+        /*
         const response = await fetch("http://localhost:5000/predict", {
           method: "POST",
           body: formData,
