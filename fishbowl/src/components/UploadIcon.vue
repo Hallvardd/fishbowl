@@ -1,20 +1,9 @@
 <script setup>
-    //import { ArrowUpTrayIcon } from '@heroicons/vue/24/outline';
+    import { ArrowUpTrayIcon } from '@heroicons/vue/24/outline';
 </script>
 
 <template>
-  <div class="w-6 h-6">
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      class="h-6 w-6"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-     />
-  </div>
-  <!-- >
-  <ArrowUpTrayIcon class="w-6 h-6 text-blue-500" />
-  < -->
+  <ArrowUpTrayIcon class="icon"/>
 </template>
 
 <script>
@@ -22,3 +11,15 @@ export default {
   name: "UploadIcon",
 };
 </script>
+
+<style scoped>
+.icon {
+  width: 24px;
+  height: 24px;
+}
+
+.icon-svg {
+  width: 24px;
+  height: 24px;
+}
+</style>

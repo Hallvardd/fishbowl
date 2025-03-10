@@ -1,30 +1,22 @@
-<template>
-  <div class="flex flex-col items-center justify-center min-h-screen bg-white p-6 text-black">
-    <div class="max-w-md w-full bg-gray-100 shadow-lg rounded-3xl p-6 text-center border border-gray-300">
-      <h1 class="text-2xl font-semibold text-black mb-4">Water Level Detector</h1>
-      <label class="cursor-pointer bg-gray-300 text-black py-3 px-6 rounded-xl flex items-center justify-center gap-2 shadow-md hover:bg-gray-400 transition">
-        <div class="w-6 h-6">
+<style scoped>
+</style><template>
+  <div class="container">
+    <div class="content">
+      <h1>Water Level Detector</h1>
+      <label class="upload-label">
+        <div class="upload-text">
           {{ image ? "Upload New Image" : "Upload Image" }}
         </div>
-        <input type="file" accept="image/*" class="hidden" @change="handleImageUpload" />
+        <input type="file" accept="image/*" @change="handleImageUpload" />
       </label>
-      <div v-if="image" class="mt-6 relative flex justify-center">
-        <div class="relative w-72 h-72 flex items-center justify-center bg-gray-200 rounded-full shadow-inner overflow-hidden">
-          <img :src="image" alt="Uploaded Preview" class="absolute w-64 h-64 object-cover rounded-full opacity-50" />
-          <!---
-          <motion-img
-            :src="goldfish"
-            alt="Goldfish"
-            class="w-20 h-20"
-            :animate="getFishAnimation()"
-            transition="{ repeat: Infinity, duration: 2 }"
-          />
-          -->
+      <div v-if="image" class="image-container">
+        <div class="image-wrapper">
+          <img :src="image" alt="Uploaded Preview" />
         </div>
       </div>
-      <p v-if="waterLevel !== null" class="mt-4 text-black font-medium">Water Level: {{ waterLevel }}%</p>
-      <p v-if="waterLevel !== null" class="mt-2 text-black font-semibold">{{ getFeedbackMessage() }}</p>
-      <p v-if="error" class="mt-4 text-red-500 font-medium">{{ error }}</p>
+      <p v-if="waterLevel !== null" class="water-level">Water Level: {{ waterLevel }}%</p>
+      <p v-if="waterLevel !== null" class="feedback-message">{{ getFeedbackMessage() }}</p>
+      <p v-if="error" class="error-message">{{ error }}</p>
     </div>
   </div>
 </template>
@@ -112,7 +104,96 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background-color: white;
+  padding: 24px;
+  color: black;
+}
+
+.content {
+  max-width: 384px;
+  width: 100%;
+  background-color: #f3f4f6;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 24px;
+  padding: 24px;
+  text-align: center;
+  border: 1px solid #e5e7eb;
+}
+
+h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: black;
+  margin-bottom: 16px;
+}
+
+.upload-label {
+  cursor: pointer;
+  background-color: #e4e4e4;
+  color: black;
+  padding: 12px 24px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.2s;
+}
+
+.upload-label:hover {
+  background-color: #b4b4b4;
+}
+
 input[type="file"] {
   display: none;
+}
+
+.image-container {
+  margin-top: 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.image-wrapper {
+  width: 256px;
+  height: 256px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #e5e7eb;
+  border-radius: 50%;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+  opacity: 1.0;
+}
+
+.water-level {
+  margin-top: 16px;
+  font-weight: 500;
+}
+
+.feedback-message {
+  margin-top: 8px;
+  font-weight: 600;
+}
+
+.error-message {
+  margin-top: 16px;
+  color: #f87171;
+  font-weight: 500;
 }
 </style>
